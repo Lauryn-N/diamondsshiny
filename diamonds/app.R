@@ -66,8 +66,9 @@ server <- function(input, output) {
   
   output$tablo <- renderDT ({ 
     diamonds %>%
-      filter(color == input$Color_Input)
-  })
+      filter(color == input$Color_Input)}
+    , rownames = FALSE)
+
 }
 
 

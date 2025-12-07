@@ -57,7 +57,7 @@ server <- function(input, output) {
       labs(
         x = "Carat",
         y = "Price",
-        title = paste("Diamants de couleur :", input$Color_Input)
+        title = paste("prix:", input$Price_Input,"& color:" input$Color_Input)
       ) +
       theme_minimal()
   })

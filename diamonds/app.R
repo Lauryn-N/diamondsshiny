@@ -58,7 +58,8 @@ server <- function(input, output) {
         x = "Carat",
         y = "Price",
         title = paste("prix :", input$price, "& color :", input$Color_Input)) +
-      theme_minimal()
+      theme_minimal()+
+      theme(legend.position = "none")  
       
   })
   

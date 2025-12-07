@@ -57,8 +57,9 @@ server <- function(input, output) {
       labs(
         x = "Carat",
         y = "Price",
-        title = paste("prix :", input$price, "& color :", input$Color_Input) +
+        title = paste("prix :", input$price, "& color :", input$Color_Input)) +
       theme_minimal()
+      
   })
   
   output$value <- renderPrint({ input$boutton1 })

@@ -24,7 +24,7 @@ ui <- fluidPage(
       
       
       selectInput("Color_Input", "Choisir une couleur à filtrer :",
-                  choices = unique(diamonds$color)),
+                   choices = sort(unique(diamonds$color))),
       
       sliderInput("price",
                   "Prix maximum :",

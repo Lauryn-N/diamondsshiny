@@ -69,7 +69,7 @@ server <- function(input, output) {
                    filter(
                      color == input$Color_Input,
                      price <= input$price
-                   )
+                    )
                  
                  rv$dfc <- rv$df
                  rv$choix <- ifelse(input$boutton1 == 1, "pink", "black")
@@ -102,7 +102,8 @@ output$plot <- plotly::renderPlotly({
     
   })
   
-  output$tablo <- renderDT({
+ 
+ output$tablo <- renderDT({
    
      req(rv$df)
     
@@ -112,6 +113,5 @@ output$plot <- plotly::renderPlotly({
   }, rownames = FALSE)
 
 }
-
 
 shinyApp(ui = ui, server = server)

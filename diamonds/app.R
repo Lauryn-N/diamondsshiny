@@ -1,51 +1,50 @@
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    https://shiny.posit.co/
-#
-
 library(shiny)
+library(dplyr)
+library(ggplot2)
+library(DT)
+library(bslib)
+library(thematic)
+library(reshape2)
 
-# Define UI for application that draws a histogram
 ui <- fluidPage(
 
-    # Application title
-    titlePanel("Old Faithful Geyser Data"),
+  theme = bs_theme(version = 5),
+  titlePanel("Exploration des Diamants"),
 
-    # Sidebar with a slider input for number of bins 
     sidebarLayout(
         sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
+            sliderInput("price",
+                        "Prix maximum :",
+                        min = 300,
+                        max = 20000,
+                        value = 5000)
         ),
 
-        # Show a plot of the generated distribution
+      
         mainPanel(
-           plotOutput("distPlot")
+          plotOutput("diamondsplot")
         )
     )
 )
 
-# Define server logic required to draw a histogram
+
 server <- function(input, output) {
 
-    output$distPlot <- renderPlot({
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white',
-             xlab = 'Waiting time to next eruption (in mins)',
-             main = 'Histogram of waiting times')
-    })
+  thematic::thematic_shiny(font = "auto")
+  
+  output$diamondsplot <- renderPlot({
+    diamonds %>%
+      filter(color == input$Color_Input) %>%    
+      
+      ggplot(aes(x = carat, y = price, color = color)) +
+      geom_point(alpha = 0.6) +                
+      labs(
+        x = "Carat",
+        y = "Price",
+        title = paste("Diamants de couleur :", input$Color_Input)
+      ) +
+      theme_minimal()})
 }
 
-# Run the application 
+
 shinyApp(ui = ui, server = server)

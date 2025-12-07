@@ -63,6 +63,11 @@ server <- function(input, output) {
   })
   
   output$value <- renderPrint({ input$boutton1 })
+  
+  output$tablo <- renderDT ({ 
+    diamonds %>%
+      filter(color == input$Color_Input)
+  })
 }
 
 

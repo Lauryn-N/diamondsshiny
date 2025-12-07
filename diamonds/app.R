@@ -8,22 +8,38 @@ library(reshape2)
 
 ui <- fluidPage(
 
-  theme = bs_theme(version = 5),
+  theme = bs_theme(
+    version = 5,
+    bootswatch = "minty"
+  ),
+  
   titlePanel("Exploration des Diamants"),
 
-    sidebarLayout(
-        sidebarPanel(
-            sliderInput("price",
-                        "Prix maximum :",
-                        min = 300,
-                        max = 20000,
-                        value = 5000)
-        ),
-
+  sidebarLayout(
+    sidebarPanel(
       
-        mainPanel(
-          plotOutput("diamondsplot")
-        )
+      radioButtons("boutton1", label = ("Colorier les points en rose ?"),
+                   choices = list("Oui" = 1, "Non" = 2 ), 
+                   selected = 1),
+      
+      
+      selectInput("Color_Input", "Choisir une couleur à filtrer :",
+                  choices = unique(diamonds$color)),
+      
+      sliderInput("price",
+                  "Prix maximum :",
+                  min = 300,
+                  max = 20000,
+                  value = 5000),
+      
+      
+      actionButton(inputId = "boutton2", label = "Visualiser le graph"),
+    ),
+
+    mainPanel(
+      plotOutput("diamondsplot"), 
+      DTOutput ("tablo")
+    )
     )
 )
 
@@ -43,7 +59,10 @@ server <- function(input, output) {
         y = "Price",
         title = paste("Diamants de couleur :", input$Color_Input)
       ) +
-      theme_minimal()})
+      theme_minimal()
+  })
+  
+  output$value <- renderPrint({ input$boutton1 })
 }
 
 

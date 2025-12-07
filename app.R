@@ -5,6 +5,7 @@ library(DT)
 library(bslib)
 library(thematic)
 library(reshape2)
+library(plotly)
 
 
 ui <- fluidPage(
@@ -42,7 +43,7 @@ ui <- fluidPage(
       DTOutput ("tablo")
       
     )
-    )
+  )
 )
 
 
@@ -52,7 +53,9 @@ server <- function(input, output) {
   
   rv <- reactiveValues(df = NULL,
                        dfc = NULL,
-                       choix = NULL
+                       choix = NULL,
+                       prix = NULL,
+                       colorsk = NULL,
                        )
   
 
@@ -70,6 +73,8 @@ server <- function(input, output) {
                  
                  rv$dfc <- rv$df
                  rv$choix <- ifelse(input$boutton1 == 1, "pink", "black")
+                 rv$prix<- input$price
+                 rv$colorsk<- input$Color_Input
                })
   
   output$value <- renderPrint({ 
@@ -88,7 +93,7 @@ output$plot <- plotly::renderPlotly({
                    labs(
                      x = "Carat",
                      y = "Price",
-                     title = paste("prix :",max(rv$dfc$price), "& color :", unique(rv$dfc$color))
+                     title = paste("prix :", rv$prix, "& color :", rv$colorsk)
                    ) +
                    theme_minimal() +
                    theme(legend.position = "none") 
@@ -96,7 +101,6 @@ output$plot <- plotly::renderPlotly({
     plotly::ggplotly(mygraph)
     
   })
-  
   
   output$tablo <- renderDT({
    
@@ -108,8 +112,6 @@ output$plot <- plotly::renderPlotly({
   }, rownames = FALSE)
 
 }
-
-
 
 
 shinyApp(ui = ui, server = server)

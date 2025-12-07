@@ -51,12 +51,11 @@ server <- function(input, output) {
   thematic::thematic_shiny(font = "auto")
   
   rv <- reactiveValues(df = NULL,
-                       dfc = NULL
+                       dfc = NULL,
+                       choix = NULL
                        )
   
-  
-  output$value <- renderPrint({ input$boutton1 })
-  
+
   observeEvent(input$boutton2,
                
                {showNotification(
@@ -70,21 +69,26 @@ server <- function(input, output) {
                    )
                  
                  rv$dfc <- rv$df
+                 rv$choix <- ifelse(input$boutton1 == 1, "pink", "black")
                })
+  
+  output$value <- renderPrint({ 
+    req(rv$choix)
+    rv$choix })
+  
   
 output$plot <- plotly::renderPlotly({
   
-  req(rv$df_plot)
+  req(rv$dfc)
     
-    mygraph <- ggplot(data = diamonds %>%
+    mygraph <- ggplot(data = rv$dfc %>%
                         filter(color == input$Color_Input, price <= input$price)) +
       aes(x = carat, y = price) +
-      geom_point(alpha = 0.6, 
-                 color = ifelse(input$boutton1 == 1, "pink", "black"))+ 
+      geom_point(alpha = 0.6, color = rv$choix )+ 
                    labs(
                      x = "Carat",
                      y = "Price",
-                     title = paste("prix :", input$price, "& color :", input$Color_Input)
+                     title = paste("prix :",max(rv$dfc$price), "& color :", unique(rv$dfc$color))
                    ) +
                    theme_minimal() +
                    theme(legend.position = "none") 
@@ -94,12 +98,11 @@ output$plot <- plotly::renderPlotly({
   })
   
   
-
-  
   output$tablo <- renderDT({
+   
+     req(rv$df)
     
-    
-    diamonds %>%
+    rv$df %>%
       filter(color == input$Color_Input) %>% 
       select(carat, cut, color, clarity, depth, table, price)  
   }, rownames = FALSE)

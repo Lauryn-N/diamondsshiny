@@ -6,6 +6,7 @@ library(bslib)
 library(thematic)
 library(reshape2)
 
+
 ui <- fluidPage(
 
   theme = bs_theme(
@@ -37,8 +38,9 @@ ui <- fluidPage(
     ),
 
     mainPanel(
-      plotOutput("diamondsplot"), 
+      plotly::plotlyOutput("plot"),
       DTOutput ("tablo")
+      
     )
     )
 )
@@ -47,20 +49,24 @@ ui <- fluidPage(
 server <- function(input, output) {
 
   thematic::thematic_shiny(font = "auto")
-  
-  output$diamondsplot <- renderPlot({
-    diamonds %>%
-      filter(color == input$Color_Input, price <= input$price) %>% 
-      ggplot(aes(x = carat, y = price)) + 
+ 
+output$plot <- plotly::renderPlotly({
+    
+    mygraph <- ggplot(data = diamonds %>%
+                        filter(color == input$Color_Input, price <= input$price)) +
+      aes(x = carat, y = price) +
       geom_point(alpha = 0.6, 
-                 color = ifelse(input$boutton1 == 1, "pink", "black")) + 
-      labs(
-        x = "Carat",
-        y = "Price",
-        title = paste("prix :", input$price, "& color :", input$Color_Input)
-      ) +
-      theme_minimal() +
-      theme(legend.position = "none") 
+                 color = ifelse(input$boutton1 == 1, "pink", "black"))+ 
+                   labs(
+                     x = "Carat",
+                     y = "Price",
+                     title = paste("prix :", input$price, "& color :", input$Color_Input)
+                   ) +
+                   theme_minimal() +
+                   theme(legend.position = "none") 
+    
+    plotly::ggplotly(mygraph)
+    
   })
   
   output$value <- renderPrint({ input$boutton1 })
@@ -77,6 +83,5 @@ server <- function(input, output) {
   }, rownames = FALSE)
 
 }
-
 
 shinyApp(ui = ui, server = server)

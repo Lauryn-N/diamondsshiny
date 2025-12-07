@@ -50,17 +50,17 @@ server <- function(input, output) {
   
   output$diamondsplot <- renderPlot({
     diamonds %>%
-      filter(color == input$Color_Input) %>%    
-      
-      ggplot(aes(x = carat, y = price, color = color)) +
-      geom_point(alpha = 0.6) +                
+      filter(color == input$Color_Input, price <= input$price) %>% 
+      ggplot(aes(x = carat, y = price)) + 
+      geom_point(alpha = 0.6, 
+                 color = ifelse(input$boutton1 == 1, "pink", "black")) + 
       labs(
         x = "Carat",
         y = "Price",
-        title = paste("prix :", input$price, "& color :", input$Color_Input)) +
-      theme_minimal()+
-      theme(legend.position = "none")  
-      
+        title = paste("prix :", input$price, "& color :", input$Color_Input)
+      ) +
+      theme_minimal() +
+      theme(legend.position = "none") 
   })
   
   output$value <- renderPrint({ input$boutton1 })

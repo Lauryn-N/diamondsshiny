@@ -49,8 +49,32 @@ ui <- fluidPage(
 server <- function(input, output) {
 
   thematic::thematic_shiny(font = "auto")
- 
+  
+  rv <- reactiveValues(df = NULL,
+                       dfc = NULL
+                       )
+  
+  
+  output$value <- renderPrint({ input$boutton1 })
+  
+  observeEvent(input$boutton2,
+               
+               {showNotification(
+                 paste("prix :", input$price, "& color :", input$Color_Input), 
+                 type = "message")
+                 
+                 rv$df <- diamonds %>%
+                   filter(
+                     color == input$Color_Input,
+                     price <= input$price
+                   )
+                 
+                 rv$dfc <- rv$df
+               })
+  
 output$plot <- plotly::renderPlotly({
+  
+  req(rv$df_plot)
     
     mygraph <- ggplot(data = diamonds %>%
                         filter(color == input$Color_Input, price <= input$price)) +
@@ -69,19 +93,20 @@ output$plot <- plotly::renderPlotly({
     
   })
   
-  output$value <- renderPrint({ input$boutton1 })
   
-  observeEvent(input$boutton2,
-               {showNotification(
-                 paste("prix :", input$price, "& color :", input$Color_Input), 
-                       type = "message")})
+
   
   output$tablo <- renderDT({
+    
+    
     diamonds %>%
       filter(color == input$Color_Input) %>% 
       select(carat, cut, color, clarity, depth, table, price)  
   }, rownames = FALSE)
 
 }
+
+
+
 
 shinyApp(ui = ui, server = server)
